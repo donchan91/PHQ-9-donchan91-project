@@ -5,8 +5,6 @@ from text import *
 import pandas as pd 
 import os 
 
-
-
 TITLE_FONT = ("Verdana", 24)
 LARGE_FONT = ("Verdana", 12)
 
@@ -19,9 +17,17 @@ else:
     df.to_csv('phq9.csv', index = False)
     df = pd.read_csv('phq9.csv', header=0)
 
-#
+
+
+def popupmsg(title, msg):
+    popup = tk.Tk()
+    popup.wm_title(title)
+    label = ttk.Label(popup, text=msg)
+    label.pack()
+
+#Mainbody will act as the root of all screens
 class MainBody(tk.Tk):
-    #__init__ method initialises the class. self if implied, and needs not be passed. First parameter in every Method. kwarg= key word arguments (e.g. in a dictionary)
+    #__init__ method initialises the class.  First parameter in every Method. kwarg= key word arguments (e.g. in a dictionary)
     def __init__(self, *args, **kwargs):
         #Initialise 
         tk.Tk.__init__(self, *args, *kwargs) #Initialising Tkinter
@@ -43,6 +49,9 @@ class MainBody(tk.Tk):
         frame.tkraise() #tkraise will raise the screeen to the front. 
 
 
+
+
+#StartPage
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -82,11 +91,14 @@ class phq9_intro(tk.Frame):
 
         button1 = tk.Button(self, text="Back to Main", command = lambda: controller.show_frame(StartPage))
         button1.grid(row=5, column=0)        
-   
+
+
+
 class phq9_main(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        #Initialising variables which hold answers 
+        
+        #Initialising question variables
         q1a = IntVar()
         q2a = IntVar()
         q3a = IntVar()
@@ -97,84 +109,104 @@ class phq9_main(tk.Frame):
         q8a = IntVar()
         q9a = IntVar()
 
-        
-        #Frame of the page. Main Canvas attaches here. 
-        main_frame = tk.Frame(self)
-        main_frame.grid_propagate(True)
-        main_frame.grid()
+        # phq9_frame contains questions, buttons and other visible features
+        # phq9_canvas contains phq9_frame
+        # phq9_body contains phq9_canvas and scroll
+        # phq9_main (i.e. self) contains phq9_body
+         
+        # phq9_body Frame
+        phq9_body = tk.Frame(self)
+        phq9_body.pack(fill="both", expand=1)
 
-        #Main Canvas. Scrollbar attaches here. 
-        main_canvas = tk.Canvas(main_frame, scrollregion=(0, 0, 1200, 800))
-        main_canvas.grid(row=0, column=0, sticky="nsew")
-        main_canvas.grid_propagate(True)
+        #phq9_canvas: Canvas
+        phq9_canvas = tk.Canvas(phq9_body)
+        phq9_canvas.pack(side="left", fill="both", expand=1)
+
+        #Scrollbar (attach to phq9_body)
+        scroll = ttk.Scrollbar(phq9_body, orient="vertical", command=phq9_canvas.yview)       
+        scroll.pack(side='right', fill='y')
+
+        #Configure canvas
+        phq9_canvas.configure(yscrollcommand=scroll.set)
+        phq9_canvas.bind('<Configure>', lambda e: phq9_canvas.configure(scrollregion = phq9_canvas.bbox('all')))
+
+
+        #phqq_frame
+        phq9_frame = tk.Frame(phq9_canvas)
+        phq9_canvas.create_window((0,0), window=phq9_frame, anchor='nw')
+
+        title = tk.Label(phq9_frame, text="PHQ-9 Questionnaire", pady=10, font=TITLE_FONT)
+        title.grid(sticky="w")
+
+        q1t = tk.Label(phq9_frame, text=q1, justify="left", font=LARGE_FONT)
+        q1t.grid(sticky="w")
+        for i in range(0, 4):
+            tk.Radiobutton(phq9_frame, variable=q1a, value = i, text=choice[i], justify="left").grid(sticky="w") #end row = 5
+
+                        
+        q2t = tk.Label(phq9_frame, text=q2, justify="left", font=LARGE_FONT)
+        q2t.grid(sticky="w") 
+        for i in range(0, 4):
+            tk.Radiobutton(phq9_frame, variable=q2a, value = i, text=choice[i], justify="left").grid(sticky="w") #ends in row 10
        
-
-        
-
-        #Scrollbar
-        scroll = tk.Scrollbar(self, orient="vertical", command=main_canvas.yview)
-        
-        scroll.grid(row=0, column=1, sticky="ns")        
-        main_canvas.configure(yscrollcommand=scroll.set)
-
-        
-
-
-        title = tk.Label(main_canvas, text="PHQ-9 Questionnaire", pady=10, font=TITLE_FONT)
-        title.grid(row=0, column=0, columnspan=5, sticky="w")
-        q1t = tk.Label(main_canvas, text=q1, justify="left", font=LARGE_FONT)
-        q1t.grid(row=1, column=0, columnspan=3, sticky="w")
+        q3t = tk.Label(phq9_frame, text=q3, justify="left", font=LARGE_FONT)
+        q3t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q1a, value = i, text=choice[i], justify="left").grid(row=(i+2), sticky="w") #end row = 5
+            tk.Radiobutton(phq9_frame, variable=q3a, value = i, text=choice[i], justify="left").grid(sticky="w") #ends in row 15
 
-        q2t = tk.Label(main_canvas, text=q2, justify="left")
-        q2t.grid(row=6, column=0, columnspan=3, sticky="w") 
+        q4t = tk.Label(phq9_frame, text=q4, justify="left", font=LARGE_FONT)
+        q4t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q2a, value = i, text=choice[i], justify="left").grid(row=7 + i, sticky="w") #ends in row 10
-       
-        q3t = tk.Label(main_canvas, text=q3, justify="left")
-        q3t.grid(row=11, column=0, columnspan=3, sticky="w")
-        for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q3a, value = i, text=choice[i], justify="left").grid(row=(12 + i), column=0, sticky="w") #ends in row 15
+            tk.Radiobutton(phq9_frame, variable=q4a, value = i, text=choice[i], justify="left").grid(sticky="w") #ends in 20
 
-        q4t = tk.Label(main_canvas, text=q4, justify="left")
-        q4t.grid(row=16, column=0, columnspan=3, sticky="w")
+        q5t = tk.Label(phq9_frame, text=q5, justify="left", font=LARGE_FONT)
+        q5t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q4a, value = i, text=choice[i], justify="left").grid(row=(17 + i), sticky="w") #ends in 20
+            tk.Radiobutton(phq9_frame, variable=q5a, value = i, text=choice[i], justify="left").grid(sticky="w") #ends in row 25
 
-        q5t = tk.Label(main_canvas, text=q5, justify="left")
-        q5t.grid(row=21, column=0, columnspan=3, sticky="w")
+        q6t = tk.Label(phq9_frame, text=q6, justify="left", font=LARGE_FONT)
+        q6t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q5a, value = i, text=choice[i], justify="left").grid(row=22 + i, sticky="w") #ends in row 25
+            tk.Radiobutton(phq9_frame, variable=q6a, value = i, text=choice[i], justify="left").grid(sticky="w")
 
-        q6t = tk.Label(main_canvas, text=q6, justify="left")
-        q6t.grid(row=26, column=0, columnspan=3, sticky="w")
+        q7t = tk.Label(phq9_frame, text=q7, justify="left", font=LARGE_FONT)
+        q7t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q6a, value = i, text=choice[i], justify="left").grid(row=27 + i, sticky="w")
+            tk.Radiobutton(phq9_frame, variable=q7a, value = i, text=choice[i], justify="left").grid(sticky="w")
 
-        q7t = tk.Label(main_canvas, text=q7, justify="left")
-        q7t.grid(row=31, column=0, columnspan=3, sticky="w")
+        q8t = tk.Label(phq9_frame, text=q8, justify="left", font=LARGE_FONT)
+        q8t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q7a, value = i, text=choice[i], justify="left").grid(row=32 + i, sticky="w")
-
-        q8t = tk.Label(main_canvas, text=q8, justify="left")
-        q8t.grid(row=36, column=0, columnspan=3, sticky="w")
-        for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q8a, value = i, text=choice[i], justify="left").grid(row=37 + i, sticky="w")
+            tk.Radiobutton(phq9_frame, variable=q8a, value = i, text=choice[i], justify="left").grid(sticky="w")
  
-        q9t = tk.Label(main_canvas, text=q9, justify="left")
-        q9t.grid(row=41, column=0, columnspan=3, sticky="w")
+        q9t = tk.Label(phq9_frame, text=q9, justify="left", font=LARGE_FONT)
+        q9t.grid(sticky="w")
         for i in range(0, 4):
-            tk.Radiobutton(main_canvas, variable=q9a, value = i, text=choice[i], justify="left").grid(row=42 + i, sticky="w")
+            tk.Radiobutton(phq9_frame, variable=q9a, value = i, text=choice[i], justify="left").grid(sticky="w")
 
-        #Getting width and height to automatically calibrate position of scroll bar
-        window_width = main_canvas.winfo_reqwidth()
-        window_height = main_canvas.winfo_reqheight()
-        main_canvas.config(width=window_width, height=window_height)
-        print(window_height)
-        print(window_width)
-       
+        #Creating Navigation Buttons
+
+        back_button = tk.Button(phq9_frame, text="Return to Menu", command = lambda: controller.show_frame(StartPage))
+        back_button.grid(sticky="w")
+
+        #Creating a popup that confirms input
+        
+        
+
+
+
+        #phq9_canvas.config(width=window_width, height=window_height)
+
+        phq9_canvas.config(scrollregion=phq9_canvas.bbox('all'))
+#phq9_main ends here
+
+#phq9_result display
+class phq9_result(tk.Frame):
+    def __init__(self, parent, controller):
+        tk
+
+
 
 app = MainBody()
-app.geometry('1296x768')
+app.geometry('800x800')
 app.mainloop()

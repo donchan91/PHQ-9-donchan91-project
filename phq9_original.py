@@ -131,7 +131,7 @@ def questionnaire():
 def display_scores():
     global start
     while start == True:
-        choice1 = input("Please enter how you would like your scores to be displayed.\nT= table\nG= Graph\nS=Summary\nR=Return\nX=Exit\n").lower()
+        choice1 = input("Please enter how you would like your scores to be displayed.\nT = table\nG = Graph\nS = Summary\nR = Return\nD = Debug\nX = Exit\n").lower()
         if choice1 == "t":
             print(df)
         elif choice1 == "g":

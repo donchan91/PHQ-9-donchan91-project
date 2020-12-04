@@ -34,7 +34,10 @@ def check_duplicate():
         print(df['date'][i] == df['date'][i + 1]) #This returns if there are duplicate entries
 
 def sort_out_duplicate():
+    display_df = pd.DataFrame({})
     for i in range(len(df) - 1):
         #Loop through with the criteria that if they 
         if df['date'][i] == df['date'][i + 1]:
             pass #Put code about getting the highest score
+        else:
+            pass

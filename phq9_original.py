@@ -30,7 +30,6 @@ def questionnaire():
     score = []
     total = 0
     severity = ""
-    date_of_assessment = now
     choice = "\n1. Not at all\n2. Several Days\n3.More than half the days\n4. Nearly every day.\n"
 
     # check_ans checks if the score is in between 1 and 4, and that it is an integer
@@ -142,6 +141,7 @@ def display_scores():
             print("A graph should appear here.")
         elif choice1 == "s":
             print("This is the summary of recent PHQ-9 scores.")
+            print(df[['date', 'time', 'total', 'severity']])
         elif choice1 == "x":
             start = False
             break

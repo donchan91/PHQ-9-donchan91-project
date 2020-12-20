@@ -142,6 +142,8 @@ def display_scores():
         elif choice1 == "s":
             print("This is the summary of recent PHQ-9 scores.")
             print(df[['date', 'time', 'total', 'severity']])
+        elif choice1 == "r":
+            main_screen()
         elif choice1 == "x":
             start = False
             break

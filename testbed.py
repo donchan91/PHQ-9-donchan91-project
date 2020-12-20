@@ -23,9 +23,10 @@ else:
 
 #print(df['date'])
 
+print("Printing out the result of df['date']")
 print(df['date'])
 
-
+print("Printing out the result of len(df)")
 print(len(df)) #Returned the correct length 4
 
 #For loop below will iterate through the dates, and return True if there are duplicates
